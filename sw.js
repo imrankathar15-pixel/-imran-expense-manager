@@ -1,10 +1,14 @@
-const CACHE_NAME = "expense-tracker-pwa-v1";
+const CACHE_NAME = "expense-tracker-pwa-v2";
 const ASSETS = [
   "./",
   "./index.html",
   "./app.js",
   "./manifest.json",
-  "./icon.svg"
+  "./icon.svg",
+  "./icon-192.png",
+  "./icon-512.png",
+  "./icon-192-maskable.png",
+  "./icon-512-maskable.png"
 ];
 
 self.addEventListener("install", (event) => {
