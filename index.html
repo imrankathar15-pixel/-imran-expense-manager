@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#3b6e5c" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>Expense Tracker (INR)</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+  <style>
+    :root {
+      --primary: #3b6e5c;
+      --primary-soft: #e6f0ec;
+      --primary-dark: #2c5446;
+      --bg: #f4f6f5;
+      --card: #ffffff;
+      --text: #1e2925;
+      --muted: #64746e;
+      --border: #dce3e0;
+      --green: #2e7d5b;
+      --green-bg: #e3f3ec;
+      --red: #c25959;
+      --red-bg: #fae8e8;
+      --amber: #c4843d;
+      --input-bg: #f9fbfa;
+    }
+
+    body.dark-mode {
+      --primary: #5aa389;
+      --primary-soft: #1f332c;
+      --primary-dark: #468770;
+      --bg: #121715;
+      --card: #1b2220;
+      --text: #e6ece9;
+      --muted: #94a39d;
+      --border: #2c3633;
+      --green: #58b88e;
+      --green-bg: #1a3329;
+      --red: #e07a7a;
+      --red-bg: #382121;
+      --amber: #e0a35c;
+      --input-bg: #141a18;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding-bottom: 84px;
+      line-height: 1.45;
+      transition: background-color 0.25s, color 0.25s;
+    }
+
+    .app-header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand img {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+    }
+
+    .brand h1 {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .status-pill {
+      font-size: 0.7rem;
+      color: var(--green);
+      background: var(--green-bg);
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    .theme-btn {
+      background: var(--primary-soft);
+      color: var(--primary);
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .header-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .control-box {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      padding: 7px 10px;
+      border-radius: 10px;
+    }
+
+    .control-box label {
+      display: block;
+      font-size: 0.68rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .control-box input {
+      width: 100%;
+      border: none;
+      background: transparent;
+      color: var(--text);
+      font-size: 0.95rem;
+      font-weight: 700;
+      outline: none;
+    }
+
+    .container {
+      max-width: 580px;
+      margin: 0 auto;
+      padding: 14px;
+    }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .card h2 {
+      font-size: 0.92rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .export-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    select, input[type="text"], input[type="number"], input[type="datetime-local"] {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--input-bg);
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .metric-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+
+    .metric-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .metric-value {
+      font-size: 1.2rem;
+      font-weight: 800;
+    }
+
+    .text-green { color: var(--green); }
+    .text-red { color: var(--red); }
+
+    .progress-bg {
+      height: 7px;
+      background: var(--border);
+      border-radius: 999px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    canvas {
+      width: 100% !important;
+      height: 200px !important;
+      display: block;
+    }
+
+    .legend-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 10px;
+      font-size: 0.76rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .tx-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .tx-title {
+      font-weight: 700;
+      font-size: 0.92rem;
+      margin-bottom: 4px;
+    }
+
+    .tx-meta {
+      font-size: 0.75rem;
+      color: var(--muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .badge {
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.7rem;
+    }
+
+    .badge-in { background: var(--green-bg); color: var(--green); }
+    .badge-out { background: var(--red-bg); color: var(--red); }
+
+    .tx-right { text-align: right; flex-shrink: 0; }
+    .tx-amount { font-weight: 800; font-size: 0.98rem; }
+    .tx-bal { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+
+    .tx-actions {
+      margin-top: 6px;
+      display: flex;
+      gap: 5px;
+      justify-content: flex-end;
+    }
+
+    .btn-xs {
+      border: none;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-edit { background: var(--primary-soft); color: var(--primary); }
+    .btn-del { background: var(--red-bg); color: var(--red); }
+
+    .form-group { margin-bottom: 12px; }
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+      color: var(--muted);
+    }
+
+    .cat-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .icon-btn.danger {
+      background: var(--red-bg);
+      color: var(--red);
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 12px;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-secondary {
+      width: 100%;
+      padding: 10px;
+      background: var(--border);
+      color: var(--text);
+      border: none;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-top: 8px;
+      cursor: pointer;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding: 8px 0;
+      z-index: 60;
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .nav-btn.active { color: var(--primary); }
+
+    .toast {
+      position: fixed;
+      bottom: 74px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--text);
+      color: var(--card);
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+      z-index: 100;
+    }
+
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="header-top">
+      <div class="brand">
+        <img src="icon.svg" alt="App Icon" />
+        <div>
+          <h1>Expense Tracker</h1>
+          <span class="status-pill" id="saveStatus">Auto-saved</span>
+        </div>
+      </div>
+      <button class="theme-btn" id="themeToggle" onclick="toggleTheme()">🌙 Dark</button>
+    </div>
+
+    <div class="header-controls">
+      <div class="control-box">
+        <label for="masterBudget">Master Budget (₹)</label>
+        <input type="number" id="masterBudget" step="1" value="0" />
+      </div>
+      <div class="control-box">
+        <label for="monthFilter">Month</label>
+        <input type="month" id="monthFilter" value="2026-11" />
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- DASHBOARD -->
+    <section id="tab-dashboard" class="section active">
+      <div class="card">
+        <h2>Export &amp; Share Options</h2>
+        <div class="export-grid">
+          <select id="exportScope" aria-label="Scope">
+            <option value="monthly">Selected Month</option>
+            <option value="total">All Months (Total)</option>
+          </select>
+          <select id="exportFormat" aria-label="Format">
+            <option value="html">Interactive HTML</option>
+            <option value="pdf">PDF Report</option>
+            <option value="excel">Excel (.xls)</option>
+            <option value="whatsapp">WhatsApp Summary</option>
+          </select>
+        </div>
+        <button class="btn-primary" onclick="handleExport()">Download / Share</button>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">Monthly Income</div>
+          <div class="metric-value text-green" id="statIncome">₹0</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Total Expenses</div>
+          <div class="metric-value text-red" id="statExpenses">₹0</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Remaining Balance</div>
+          <div class="metric-value" id="statBalance">₹0</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Total Savings</div>
+          <div class="metric-value text-green" id="statSavings">₹0</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Daily Spending</div>
+          <div class="metric-value" id="statDaily">₹0</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Budget Utilization</div>
+          <div class="metric-value" id="statUtil">0%</div>
+          <div class="progress-bg">
+            <div class="progress-fill" id="utilBar"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Category Spending</h2>
+        <canvas id="catCanvas" width="340" height="200"></canvas>
+        <div class="legend-grid" id="catLegend"></div>
+      </div>
+
+      <div class="card">
+        <h2>Daily Spending</h2>
+        <canvas id="dailyCanvas" width="340" height="200"></canvas>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <h2 style="font-size:0.95rem;">Recent Transactions</h2>
+        <button class="btn-xs btn-edit" onclick="resetDefaultData()">Reset Sample Data</button>
+      </div>
+      <div id="txListContainer"></div>
+    </section>
+
+    <section id="tab-add" class="section">
+      <div class="card">
+        <h2 id="formHeading">Add Transaction</h2>
+        <form id="txForm">
+          <input type="hidden" id="editTxId" />
+          <div class="form-group">
+            <label for="txType">Transaction Type</label>
+            <select id="txType" onchange="onTypeChange()" required>
+              <option value="Expense">Expense</option>
+              <option value="Income">Income (Added to Master)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="txAmount">Amount in INR (₹)</label>
+            <input type="number" id="txAmount" min="0.01" step="0.01" placeholder="e.g. 500" oninput="saveDraft()" required />
+          </div>
+          <div class="form-group">
+            <label for="txCategory">Category</label>
+            <div class="cat-row">
+              <select id="txCategory" onchange="saveDraft()" required></select>
+              <button type="button" class="icon-btn" title="Add Category" onclick="promptAddCategory()">＋</button>
+              <button type="button" class="icon-btn danger" title="Delete Selected Category" onclick="deleteSelectedCategory()">🗑️</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="txNote">Description</label>
+            <input type="text" id="txNote" placeholder="e.g. Groceries, Petrol" oninput="saveDraft()" required />
+          </div>
+          <div class="form-group">
+            <label for="txDateTime">Date and Time</label>
+            <input type="datetime-local" id="txDateTime" onchange="saveDraft()" required />
+          </div>
+          <div class="form-group">
+            <label for="txPayment">Payment Method</label>
+            <select id="txPayment" onchange="saveDraft()" required>
+              <option value="UPI">UPI</option>
+              <option value="Cash">Cash</option>
+              <option value="Bank Transfer">Bank Transfer</option>
+              <option value="Debit Card">Debit Card</option>
+              <option value="Credit Card">Credit Card</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-primary" id="saveTxBtn">Save Transaction</button>
+          <button type="button" class="btn-secondary" id="cancelEditBtn" onclick="cancelEdit()" hidden>Cancel Edit</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn active" id="nav-dashboard" onclick="switchView('dashboard')">
+      <span style="font-size:1.2rem;">📊</span>
+      <span>Dashboard</span>
+    </button>
+    <button class="nav-btn" id="nav-add" onclick="switchView('add')">
+      <span style="font-size:1.2rem;">➕</span>
+      <span>Add Tx</span>
+    </button>
+  </nav>
+
+  <div class="toast" id="toast">Auto-saved</div>
+
+  <script src="app.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>

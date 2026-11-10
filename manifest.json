@@ -1,0 +1,19 @@
+{
+  "name": "Monthly Expense Tracker (INR)",
+  "short_name": "ExpenseTracker",
+  "description": "Mobile-first personal monthly expense tracker in INR with offline storage and export tools.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4f6f5",
+  "theme_color": "#3b6e5c",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
